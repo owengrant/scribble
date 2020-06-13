@@ -8,6 +8,7 @@ import io.vertx.core.json.JsonObject;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 @ApplicationScoped
 public class ProjectRepository implements PanacheRepository<Project> {
@@ -15,6 +16,7 @@ public class ProjectRepository implements PanacheRepository<Project> {
     @Inject
     EntityManager em;
 
+    @Transactional
     public Project update(long id, JsonObject data) {
         var project = findById(id);
         if(project == null) return null;
