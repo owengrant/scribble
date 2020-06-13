@@ -37,6 +37,7 @@ public class ProjectContoller {
     public Project createProject(@Parameter(required = true) ProjectPost data) {
         var project = util.mapTo(data, Project.class);
         projectRepo.persistAndFlush(project);
+        if(!projectRepo.isPersistent(project)) throw new InternalServerErrorException();
         return project;
     }
 
@@ -62,7 +63,9 @@ public class ProjectContoller {
     @PUT
     @Operation(operationId = "updateProject")
     public Project updateProject(@PathParam("id") long pid, @Parameter(required = true) ProjectPut data) {
-        return projectRepo.update(pid, JsonObject.mapFrom(data));
+        var updated = projectRepo.update(pid, JsonObject.mapFrom(data));
+        if(updated == null) throw new InternalServerErrorException();
+        return updated;
     }
 
     @Path(("{id}"))
