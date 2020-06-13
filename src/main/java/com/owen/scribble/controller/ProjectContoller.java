@@ -13,6 +13,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -32,6 +33,7 @@ public class ProjectContoller {
 
     @POST
     @Operation(operationId = "createProject")
+    @Transactional
     public Project createProject(@Parameter(required = true) ProjectPost data) {
         var project = util.mapTo(data, Project.class);
         projectRepo.persistAndFlush(project);
@@ -66,6 +68,7 @@ public class ProjectContoller {
     @Path(("{id}"))
     @DELETE
     @Operation(operationId = "deleteProject")
+    @Transactional
     public Response deleteProject(@PathParam("id") long pid) {
         var deleted = projectRepo.deleteById(pid);
         return Response.status(deleted ? 204 : 404).build();
