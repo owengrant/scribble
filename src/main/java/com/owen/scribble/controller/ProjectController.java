@@ -18,6 +18,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.UUID;
 
 @Tag(name = "Project")
 @Path("/api/v1/projects")
@@ -36,6 +37,7 @@ public class ProjectController {
     @Transactional
     public Project createProject(@Parameter(required = true) ProjectPost data) {
         var project = util.mapTo(data, Project.class);
+        project.setUuid(UUID.randomUUID());
         projectRepo.persistAndFlush(project);
         if(!projectRepo.isPersistent(project)) throw new BadRequestException();
         return project;
