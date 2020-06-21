@@ -23,7 +23,7 @@ import java.util.List;
 @Path("/api/v1/projects")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class ProjectContoller {
+public class ProjectController {
 
     @Inject
     ProjectRepository projectRepo;
@@ -37,7 +37,7 @@ public class ProjectContoller {
     public Project createProject(@Parameter(required = true) ProjectPost data) {
         var project = util.mapTo(data, Project.class);
         projectRepo.persistAndFlush(project);
-        if(!projectRepo.isPersistent(project)) throw new InternalServerErrorException();
+        if(!projectRepo.isPersistent(project)) throw new BadRequestException();
         return project;
     }
 
@@ -64,11 +64,11 @@ public class ProjectContoller {
     @Operation(operationId = "updateProject")
     public Project updateProject(@PathParam("id") long pid, @Parameter(required = true) ProjectPut data) {
         var updated = projectRepo.update(pid, JsonObject.mapFrom(data));
-        if(updated == null) throw new InternalServerErrorException();
+        if(updated == null) throw new BadRequestException();
         return updated;
     }
 
-    @Path(("{id}"))
+    @Path("{id}")
     @DELETE
     @Operation(operationId = "deleteProject")
     @Transactional
